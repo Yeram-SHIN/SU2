@@ -27,36 +27,36 @@
 
 #pragma once
 
-#include "CViscosityModel.hpp"
+#include "CConductivityModel.hpp"
 
 /*!
  * \class CSutherland
- * \brief Defines Sutherland's Law for laminar viscosity.
+ * \brief Defines Sutherland's Law for laminar conductivity.
  * \author S.Vitale, M.Pini
  */
-class CSutherland final : public CViscosityModel {
+class CCondSutherland final : public CConductivityModel {
  public:
   /*!
    * \brief Constructor of the class.
    */
-  CSutherland(su2double mu_ref, su2double t_ref, su2double s) : mu_ref_(mu_ref), t_ref_(t_ref), s_(s) {}
+  CSutherland(su2double mu_cond_ref, su2double t_cond_ref, su2double s_cond) : mu_cond_ref_(mu_cond_ref), t_cond_ref_(t_cond_ref), s_cond_(s_cond) {}
 
   /*!
    * \brief Set Viscosity.
    */
   void SetViscosity(su2double t, su2double rho) override {
-    const su2double t_ref_inv = 1.0 / t_ref_;
+    const su2double t_ref_inv = 1.0 / t_cond_ref_;
     const su2double t_nondim = t_ref_inv * t;
-    mu_ = mu_ref_ * t_nondim * sqrt(t_nondim) * ((t_ref_ + s_) / (t + s_));
+    mu_ = mu_cond_ref_ * t_nondim * sqrt(t_nondim) * ((t_cond_ref_ + s_cond_) / (t + s_cond_));
 
     /*--- Set Viscosity Derivatives. ---*/
-    const su2double ts_inv = 1.0 / (t + s_);
+    const su2double ts_inv = 1.0 / (t + s_cond_);
     dmudrho_t_ = 0.0;
-    dmudt_rho_ = mu_ref_ * (t_ref_ + s_) * ts_inv * sqrt(t_nondim) * (1.5 * t_ref_inv - t_nondim * ts_inv);
+    dmudt_rho_ = mu_cond_ref_ * (t_cond_ref_ + s_cond_) * ts_inv * sqrt(t_nondim) * (1.5 * t_ref_inv - t_nondim * ts_inv);
   }
 
  private:
-  const su2double mu_ref_{0.0};    /*!< \brief Internal Energy. */
-  const su2double t_ref_{0.0};     /*!< \brief DpDd_e. */
-  const su2double s_{0.0};         /*!< \brief DpDe_d. */
+  const su2double mu_cond_ref_{0.0};    /*!< \brief Internal Energy. */
+  const su2double t_cond_ref_{0.0};     /*!< \brief DpDd_e. */
+  const su2double s_cond_{0.0};         /*!< \brief DpDe_d. */
 };
